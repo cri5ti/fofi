@@ -12,8 +12,8 @@ export default new Vuex.Store({
 
         feats: {
             list: [
-                {id: 'inc1', name: 'Income', type: 'income'},
-                {id: 'exp1', name: 'Expense', type: 'expense'},
+                {id: 'inc1', name: 'Income', type: 'income', enabled: true},
+                {id: 'exp1', name: 'Expense', type: 'expense', enabled: true},
             ],
 
             byId: {
@@ -49,6 +49,7 @@ export default new Vuex.Store({
 
             // const feats = s.feats.list.map(i => i.id);
             const calcs = feats.list.map(i => {
+                if (!i.enabled) return;
                 const s = feats.byId[i.id];
                 if (!s) {
                     console.warn(`Unknown feature ${i.id}`);
@@ -85,11 +86,11 @@ export default new Vuex.Store({
             }
 
             return [
-                ...calcs.map(i => i.serie),
                 {
                     name: 'Balance',
                     data
-                }
+                },
+                ...calcs.map(i => i.serie),
             ];
         }
     },
@@ -99,7 +100,9 @@ export default new Vuex.Store({
     },
 
     actions: {
-
+        toggleFeature({state}, { id, enabled }) {
+            state.feats.list.find(i => i.id == id)!.enabled = enabled;
+        }
     },
 });
 
