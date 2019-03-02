@@ -13,6 +13,13 @@ export default new Router({
       name: 'home',
       component: Home,
     },
+
+    {
+      path: '/forecast',
+      name: 'forecast',
+      component: () => import(/* webpackChunkName: "forecast" */ './views/Forecast.vue'),
+    },
+
     {
       path: '/about',
       name: 'about',
