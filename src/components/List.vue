@@ -1,7 +1,7 @@
 <template>
 	<ul class="list">
 		<li v-for="item in items">
-			<Checkbox :label="item.label" :checked="item.enabled" :onClick="item.onToggle"/>
+			<Checkbox :label="item.label" :checked="item.enabled" v-on:toggle="onToggle(item, $event)"/>
 		</li>
 	</ul>
 </template>
@@ -19,8 +19,10 @@
         @Prop() private items!: Array<{
             label: string,
 	        enabled: boolean,
-	        onToggle: ()=>void;
         }>;
+        onToggle(item, checked) {
+            this.$emit('toggle', item, checked);
+        }
     }
 </script>
 

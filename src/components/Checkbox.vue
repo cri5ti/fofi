@@ -8,17 +8,15 @@
 <script lang="ts">
     import { Component, Prop, Vue } from 'vue-property-decorator';
 
-    @Component({
-	    methods: {
-            toggle: function(ev) {
-	            this.onClick(!this.checked);
-            }
-	    }
-    })
+    @Component()
     export default class Checkbox extends Vue {
         @Prop() private label: string;
         @Prop() private checked: boolean;
         @Prop() private onClick: (checked)=>void;
+
+        toggle() {
+            this.$emit('toggle', !this.checked);
+        }
     }
 </script>
 

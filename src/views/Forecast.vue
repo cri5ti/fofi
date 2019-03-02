@@ -1,14 +1,8 @@
 <template>
 	<div class="home">
-		<div>{{rate}}</div>
-
-		<List :items="features"/>
+		<List :items="features" v-on:toggle="featureToggle"/>
 
 		<chart type=line height=350 :options="chartOptions" :series="series"/>
-
-		<button v-on:click="toggleFeature">Greet</button>
-
-		<!--<HelloWorld msg="Welcome to Your Vue.js + TypeScript App"/>-->
 	</div>
 </template>
 
@@ -28,26 +22,21 @@
         },
         computed: {
             ...mapState({
-                rate: state => state.mortgage_rate,
-
-                features: s => s.feats.list.map(i => ({
+                features: s => s.feats.map(i => ({
+	                id: i.id,
 	                label: i.name,
-	                enabled: i.enabled,
-	                onToggle: function (enabled: boolean) {
-                        console.log('onToggle', enabled);
-	                    this.$store.dispatch("toggleFeature", { id: i.id, enabled });
-	                }
+	                enabled: i.enabled !== false,
                 }))
             }),
             ...mapGetters({
                 series: 'series'
             })
         },
-        methods: {
-            toggleFeature: function() {
-                console.log('toggleFeature')
+	    methods: {
+            featureToggle: function (feat, enabled) {
+                this.$store.dispatch("toggleFeature", { id: feat.id, enabled });
             }
-        },
+	    },
         data: function () {
             return {
                 // series: [{
@@ -56,19 +45,46 @@
                 // }],
                 // items: [{label:"Foo"}, { label: "Bar"}],
                 chartOptions: {
+                    annotations: {
+                        xaxis: [
+	                        { x: Date.UTC(2019+5,0,1), label: { text: '4.5%' } }
+                        ],
+                        yaxis: [
+	                        {
+	                            y: 10000,
+		                        label: {
+	                                text: 'Safety'
+                                }
+	                        }
+                        ]
+                    },
                     chart: {
+                        animations: {enabled: false},
                         height: 350,
                         zoom: {
                             enabled: true
-                        }
+                        },
+	                    events: {
+                            click: function(event, chartContext, config) {
+                                debugger;
+                            },
+	                    },
+	                    // toolbar: { show: false }
                     },
+	                legend: { show: false },
                     dataLabels: {
-                        enabled: true
+                        // enabled: true,
+                        // formatter: function (val, opts) {
+                        //     return Math.round(val).toLocaleString();
+                        // },
                     },
                     stroke: {
                         curve: 'straight',
                         width: 1
                     },
+	                tooltip: {
+                        y: { formatter: (val) => Math.round(val).toLocaleString() }
+	                },
                     title: {
                         // text: 'Product Trends by Month',
                         // align: 'left'
@@ -81,6 +97,12 @@
                     },
                     xaxis: {
                         type: 'datetime',
+	                    labels: {
+                            format: 'dd MMM \'yy'
+                            // formatter: function(val, opts) {
+                            //     return new Date(val).toLocaleDateString();
+                            // }
+	                    }
                         // categories: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep'],
                     }
                 }
